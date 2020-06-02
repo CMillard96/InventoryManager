@@ -18,23 +18,32 @@ public class MazeSolver {
 	
 	public static void main(String[] args) {
 		
-		Position p = new Position(3, 12);		
-		path.push(p);
+		if(solveMaze(new Position(3, 12))) {
+			System.out.println("You won!");
+		} else{ 
+			System.out.println("No path");
+		}
+
+	}
+	
+	private static boolean solveMaze(Position p) {
 		
-		
+		path.push(p);		
 		
 		while(true) {
 			
-			int y = path.peek().y;
 			int x = path.peek().x;
+			int y = path.peek().y;			
 			maze[x][y] = 0;
 			
 			//down
+			
+			
 			if(isValid(x+1, y)) {
 				
 				if(maze[x+1][y] == 2) {
-					System.out.println("Moved down and you win!");
-					return;
+					System.out.println("Moved down");
+					return true;
 				} else if(maze[x+1][y] == 1) {
 					System.out.println("Moved down");
 					path.push(new Position(x+1, y));
@@ -46,8 +55,8 @@ public class MazeSolver {
 			if(isValid(x, y-1)) {
 				
 				if(maze[x][y-1] == 2) {
-					System.out.println("Moved left and you win!");
-					return;
+					System.out.println("Moved left");
+					return true;
 				} else if(maze[x][y-1] == 1) {
 					System.out.println("Moved left");
 					path.push(new Position(x, y-1));
@@ -59,8 +68,8 @@ public class MazeSolver {
 			if(isValid(x-1, y)) {
 				
 				if(maze[x-1][y] == 2) {
-					System.out.println("Moved up and you win!");
-					return;
+					System.out.println("Moved up");
+					return true;
 				} else if(maze[x-1][y] == 1) {
 					System.out.println("Moved up");
 					path.push(new Position(x-1, y));
@@ -72,8 +81,8 @@ public class MazeSolver {
 			if(isValid(x, y+1)) {
 				
 				if(maze[x][y+1] == 2) {
-					System.out.println("Moved right and you win!");
-					return;
+					System.out.println("Moved right");
+					return true;
 				} else if(maze[x][y+1] == 1) {
 					System.out.println("Moved right");
 					path.push(new Position(x, y+1));
@@ -85,17 +94,13 @@ public class MazeSolver {
 			path.pop();
 			System.out.println("Moved back");
 			if(path.size() <= 0) {
-				System.out.println("No path");
-				return;
+				
+				return false;
 			}
 		}
 		
-		
-		
-		
-
 	}
-	
+
 	public static boolean isValid(int x, int y) {
 		
 		
