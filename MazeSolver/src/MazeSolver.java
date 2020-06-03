@@ -11,23 +11,7 @@ public class MazeSolver {
 		
 	public static void main(String[] args) throws FileNotFoundException {
 		
-		ArrayList<Maze> mazes = new ArrayList<Maze>();
-		
-		Maze m = new Maze();
-		
-		//fill list from file
-		Scanner in = new Scanner(new File("mazes.txt"));
-		int rows = Integer.parseInt(in.nextLine());
-		m.maze = new int[rows][];
-				
-		for(int i = 0; i < rows; i++) {
-			String line = in.nextLine();
-			m.maze[i] = Arrays.stream(line.split(", ")).mapToInt(Integer::parseInt).toArray();
-		}
-		
-		m.start = new Position(Integer.parseInt(in.nextLine()), Integer.parseInt(in.nextLine()));
-				
-		mazes.add(m);
+		ArrayList<Maze> mazes = readMazes();
 		
 		int i = 0;
 		while(i<mazes.size()) {
@@ -42,6 +26,34 @@ public class MazeSolver {
 
 	}
 	
+	private static ArrayList<Maze> readMazes() throws FileNotFoundException {
+		ArrayList<Maze> mazes = new ArrayList<Maze>();
+		
+		Scanner in = new Scanner(new File("mazes.txt"));
+		
+		while(in.hasNext()) {
+			
+			Maze m = new Maze();
+			
+			//fill list from file
+			
+			int rows = Integer.parseInt(in.nextLine());
+			m.maze = new int[rows][];
+					
+			for(int i = 0; i < rows; i++) {
+				String line = in.nextLine();
+				m.maze[i] = Arrays.stream(line.split(", ")).mapToInt(Integer::parseInt).toArray();
+			}
+			
+			m.start = new Position(Integer.parseInt(in.nextLine()), Integer.parseInt(in.nextLine()));
+			in.nextLine();	// remove the extra space
+			mazes.add(m);
+		}
+		in.close();
+		
+		return mazes;
+	}
+
 	private static boolean solveMaze(Maze m) {
 		
 		Position p = m.start;
@@ -60,6 +72,7 @@ public class MazeSolver {
 				
 				if(m.maze[x+1][y] == 2) {
 					System.out.println("Moved down");
+					System.out.println("Winning path: " + m.path);
 					return true;
 				} else if(m.maze[x+1][y] == 1) {
 					System.out.println("Moved down");
@@ -73,6 +86,7 @@ public class MazeSolver {
 				
 				if(m.maze[x][y-1] == 2) {
 					System.out.println("Moved left");
+					System.out.println("Winning path: " + m.path);
 					return true;
 				} else if(m.maze[x][y-1] == 1) {
 					System.out.println("Moved left");
@@ -86,6 +100,7 @@ public class MazeSolver {
 				
 				if(m.maze[x-1][y] == 2) {
 					System.out.println("Moved up");
+					System.out.println("Winning path: " + m.path);
 					return true;
 				} else if(m.maze[x-1][y] == 1) {
 					System.out.println("Moved up");
@@ -99,6 +114,7 @@ public class MazeSolver {
 				
 				if(m.maze[x][y+1] == 2) {
 					System.out.println("Moved right");
+					System.out.println("Winning path: " + m.path);
 					return true;
 				} else if(m.maze[x][y+1] == 1) {
 					System.out.println("Moved right");
