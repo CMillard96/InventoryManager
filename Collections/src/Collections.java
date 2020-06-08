@@ -1,21 +1,30 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class Collections {
 
 	public static void main(String[] args) {
 		
+		Admin a = new Admin();
+		a.email = "Chad@hotmail.com";
+		a.ln = "Millard";
 		
-		ArrayList<Person> people = new ArrayList<Person>();
+		ArrayList<Admin> admins = new ArrayList<Admin>();
+		admins.add(a);
 		
-		//Admin class extends Person therefore Admin object can be used in same way as Person
-		Admin a  = new Admin();
-		people.add(a);
+		List<Person> people = (List<Person>)(List<?>)admins;
 		
-		doSomething(a);
+		doSomething(people);	
+		
+		
 	}
 	
-	static void doSomething(Person p) {
-		System.out.println(p);
+	
+	//(<? extends Person>) wildcard - allows arraylist of types that extend given class
+	static void doSomething(List<Person> peeps) {
+		for(Person p : peeps) {
+			System.out.println(p.email + ", " + p.ln);
+		}
 	}
 
 }
