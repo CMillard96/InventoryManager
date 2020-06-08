@@ -1,30 +1,21 @@
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 public class Collections {
 
 	public static void main(String[] args) {
 		
-		HashSet<Person> people = new HashSet<Person>();
-				
-		Person p = new Person("email@email.com", "Millard");
-		Position p1 = new Position(10, 10);
-		p.position = p1;
 		
-		Person q = new Person("other@email.com", "Millardus");
-		Position p2 = new Position(8, 9);
-		q.position = p2;
+		ArrayList<Person> people = new ArrayList<Person>();
 		
-		System.out.println(p.hashCode());
-		System.out.println(q.hashCode());
+		//Admin class extends Person therefore Admin object can be used in same way as Person
+		Admin a  = new Admin();
+		people.add(a);
 		
-		people.add(p);
-		people.add(q);
-		
-		HashMap<String, Person> peeps = new HashMap<String, Person>();
-		peeps.put("email@email.com", p);
-		System.out.println("HashMap: " + peeps.containsKey("email@email.com"));
-		
+		doSomething(a);
+	}
+	
+	static void doSomething(Person p) {
+		System.out.println(p);
 	}
 
 }

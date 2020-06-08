@@ -9,6 +9,10 @@ public class Person {
 		this.email = email;
 		this.ln = ln;
 	}
+	
+	Person(){
+		
+	}
 
 	@Override
 	public int hashCode() {
