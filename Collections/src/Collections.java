@@ -1,21 +1,30 @@
 import java.util.HashMap;
-import java.util.Set;
+import java.util.HashSet;
 
 public class Collections {
 
 	public static void main(String[] args) {
 		
-		HashMap<String, Integer> ids = new HashMap<String, Integer>();
-		ids.put("Chad Millard", 5);
+		HashSet<Person> people = new HashSet<Person>();
+				
+		Person p = new Person("email@email.com", "Millard");
+		Position p1 = new Position(10, 10);
+		p.position = p1;
 		
-		ids.put("Sally", ids.getOrDefault("Sally", 0) + 1);
+		Person q = new Person("other@email.com", "Millardus");
+		Position p2 = new Position(8, 9);
+		q.position = p2;
 		
-		Set<String> keys = ids.keySet();
-		for(String key : keys) {
-			System.out.println(key);
-			System.out.println(ids.get(key));
-			
-		}
+		System.out.println(p.hashCode());
+		System.out.println(q.hashCode());
+		
+		people.add(p);
+		people.add(q);
+		
+		HashMap<String, Person> peeps = new HashMap<String, Person>();
+		peeps.put("email@email.com", p);
+		System.out.println("HashMap: " + peeps.containsKey("email@email.com"));
+		
 	}
 
 }
