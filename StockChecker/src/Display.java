@@ -9,20 +9,25 @@ import javax.swing.JTabbedPane;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 public class Display {
 
 	private JFrame frame;
 	private JTextField txtBrand;
-	Connection con;
 	private JTextField txtItemID;
 	private JTextField txtSize;
 	private JTextField txtPrice;
 	private JTextField txtCategory;
+	Connection con;
+	private JTable table;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -57,7 +62,7 @@ public class Display {
 	
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 687, 369);
+		frame.setBounds(100, 100, 819, 369);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
 		
@@ -72,9 +77,14 @@ public class Display {
 					String size = txtSize.getText();
 					Float price = Float.parseFloat(txtPrice.getText());
 					Integer category = Integer.parseInt(txtCategory.getText());
-					Statement stmt = con.createStatement();
-					String dbOp = "INSERT INTO mumanidb.items (itemId, brand, size, price, categoryId) VALUES (" + itemId + ", '" + brandName + "', '" + size + "', " + price + ", " + category + ")";
-					stmt.execute(dbOp);
+					PreparedStatement stmt = con.prepareStatement("INSERT INTO mumanidb.items VALUES (?,?,?,?,?)");
+					//String dbOp = "INSERT INTO mumanidb.items (itemId, brand, size, price, categoryId) VALUES (" + itemId + ", '" + brandName + "', '" + size + "', " + price + ", " + category + ")";
+					stmt.setInt(1, itemId);
+					stmt.setString(2, brandName);
+					stmt.setString(3, size);
+					stmt.setFloat(4, price);
+					stmt.setInt(5, category);
+					stmt.execute();
 					stmt.close();
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -82,7 +92,7 @@ public class Display {
 				}
 			}
 		});
-		btnInsert.setBounds(541, 68, 97, 23);
+		btnInsert.setBounds(646, 68, 97, 23);
 		frame.getContentPane().add(btnInsert);
 		
 		txtBrand = new JTextField();
@@ -129,5 +139,46 @@ public class Display {
 		JLabel lblCategory = new JLabel("Category");
 		lblCategory.setBounds(442, 44, 46, 14);
 		frame.getContentPane().add(lblCategory);
+		
+		table = new JTable();
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+				{"ItemId", "Brand", "Size", "Price", "Category"},
+			},
+			new String[] {
+				"ItemId", "Brand", "Size", "Price", "Category"
+			}
+		));
+		table.setColumnSelectionAllowed(true);
+		table.setCellSelectionEnabled(true);
+		table.setBounds(40, 138, 471, 155);
+		frame.getContentPane().add(table);
+		
+		JButton btnRefresh = new JButton("Refresh");
+		btnRefresh.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+				Statement stmt;
+				try {
+					stmt = con.createStatement();
+					ResultSet rs = stmt.executeQuery("SELECT * FROM mumanidb.items");
+					while (rs.next()) {
+						Integer itemId = rs.getInt("itemId");
+						String brandName = rs.getString("brand");
+						String size = rs.getString("size");
+						Float price = rs.getFloat("price");
+						Integer category = rs.getInt("categoryId");
+						tableModel.addRow(new Object[] {itemId, brandName, size, price, category});
+					}
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				
+			}
+		});
+		btnRefresh.setBounds(613, 201, 89, 23);
+		frame.getContentPane().add(btnRefresh);
 	}
 }
