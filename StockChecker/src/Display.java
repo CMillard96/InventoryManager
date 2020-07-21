@@ -2,6 +2,8 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+
 import java.awt.BorderLayout;
 import javax.swing.JButton;
 import javax.swing.JSplitPane;
@@ -13,10 +15,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextField;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JList;
+import javax.swing.AbstractListModel;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
 
 public class Display {
 
@@ -28,6 +35,7 @@ public class Display {
 	private JTextField txtCategory;
 	Connection con;
 	private JTable table;
+	private JComboBox comboBox;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -44,8 +52,10 @@ public class Display {
 
 	
 	public Display() {
-		initialize();
+		initialize();		
 		createConnection();
+		bindCombo();
+		
 	}
 	
 	public void createConnection() {
@@ -60,6 +70,7 @@ public class Display {
 	}
 
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 819, 369);
@@ -92,7 +103,7 @@ public class Display {
 				}
 			}
 		});
-		btnInsert.setBounds(646, 68, 97, 23);
+		btnInsert.setBounds(534, 68, 97, 23);
 		frame.getContentPane().add(btnInsert);
 		
 		txtBrand = new JTextField();
@@ -140,24 +151,11 @@ public class Display {
 		lblCategory.setBounds(442, 44, 46, 14);
 		frame.getContentPane().add(lblCategory);
 		
-		table = new JTable();
-		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				{"ItemId", "Brand", "Size", "Price", "Category"},
-			},
-			new String[] {
-				"ItemId", "Brand", "Size", "Price", "Category"
-			}
-		));
-		table.setColumnSelectionAllowed(true);
-		table.setCellSelectionEnabled(true);
-		table.setBounds(40, 138, 471, 155);
-		frame.getContentPane().add(table);
-		
-		JButton btnRefresh = new JButton("Refresh");
+		/* JButton btnRefresh = new JButton("Refresh");
 		btnRefresh.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				DefaultTableModel tableModel = (DefaultTableModel) table.getModel();
+				tableModel.setRowCount(0);
 				Statement stmt;
 				try {
 					stmt = con.createStatement();
@@ -178,7 +176,90 @@ public class Display {
 				
 			}
 		});
-		btnRefresh.setBounds(613, 201, 89, 23);
-		frame.getContentPane().add(btnRefresh);
+		btnRefresh.setBounds(534, 130, 89, 23);
+		frame.getContentPane().add(btnRefresh); */
+		
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setBounds(28, 127, 496, 180);
+		frame.getContentPane().add(scrollPane);
+		
+		table = new JTable();
+		scrollPane.setViewportView(table);
+		table.setModel(new DefaultTableModel(
+			new Object[][] {
+			},
+			new String[] {
+				"ItemId", "Brand", "Size", "Price", "Category"
+			}
+		));
+		table.setColumnSelectionAllowed(true);
+		table.setCellSelectionEnabled(true);}
+		
+		public void bindCombo() {
+			Statement st;
+			ResultSet rs;
+			
+			try {
+				st = con.createStatement();
+				rs = st.executeQuery("SELECT 'categoryId', 'categoryName' FROM mumanidb.categories");
+				while(rs.next()) {
+					comboBox.addItem((int)rs.getInt(1));
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			
+		}
+		
+		comboBox = new JComboBox();
+		comboBox.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				ArrayList<Item> list = getData((int)comboBox.getSelectedItem());
+				DefaultTableModel model = new DefaultTableModel();
+				model.setColumnIdentifiers(new Object[] {"ItemId", "Brand", "Size", "Price", "Category"});
+				Object[] row = new Object[5];
+				for(int i = 0; i < list.size(); i++) {
+					row[0] = list.get(i).getItemID();
+					row[1] = list.get(i).getItemBrand();
+					row[2] = list.get(i).getItemSize();
+					row[3] = list.get(i).getItemPrice();
+					row[4] = list.get(i).getItemCategory();
+					model.addRow(row);
+				}
+				table.setModel(model);
+			}
+		});
+		
+		comboBox.setBounds(534, 171, 110, 23);
+		frame.getContentPane().add(comboBox);
+	}
+	
+	public ArrayList<Item> getData(int catID){
+		ArrayList<Item> list = new ArrayList<Item>();
+		
+		Statement st;
+		ResultSet rs;
+		
+		try {
+			st = con.createStatement();
+			rs = st.executeQuery("SELECT 'ItemId', 'Brand', 'Size', 'Price', 'Category' FROM 'mumanidb.items' WHERE 'Category' ="+ catID);
+			
+			Item I;
+			while(rs.next()) {
+				I = new Item(
+						rs.getInt("ItemId"),
+						rs.getString("Brand"),
+						rs.getString("Size"),
+						rs.getFloat("Price"),
+						rs.getInt("Category"));
+				list.add(I);
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return list;
 	}
 }
