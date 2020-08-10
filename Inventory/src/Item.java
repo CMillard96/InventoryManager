@@ -1,20 +1,25 @@
+import java.util.Date;
 
 public class Item {
 	
 	private int itemID;
 	private String itemBrand;
 	private String itemSize;
-	private float itemPrice;
+	private float itemCost;
 	private int itemCategory;
-	private boolean itemSold;
+	private float price;
+	private Date dateSold;
 	
 	
-	public Item(int itemID, String itemBrand, String itemSize, float itemPrice, int itemCategory) {
+	
+	public Item(int itemID, String itemBrand, String itemSize, float itemPrice, int itemCategory, float price, Date dateSold) {
 		this.itemID = itemID;
 		this.itemBrand = itemBrand;
 		this.itemSize = itemSize;
-		this.itemPrice = itemPrice;
+		this.itemCost = itemPrice;
 		this.itemCategory = itemCategory;
+		this.price = price;
+		this.dateSold = dateSold;
 		
 	}
 	
@@ -42,12 +47,12 @@ public class Item {
 		this.itemSize = itemSize;
 	}
 	
-	public float getItemPrice() {
-		return itemPrice;
+	public float getItemCost() {
+		return itemCost;
 	}
 	
-	public void setItemPrice(float itemPrice) {
-		this.itemPrice = itemPrice;
+	public void setItemCost(float itemPrice) {
+		this.itemCost = itemPrice;
 	}
 	
 	public int getItemCategory() {
@@ -58,11 +63,21 @@ public class Item {
 		this.itemCategory = itemCategory;
 	}
 	
-	public boolean getItemSold() {
-		return itemSold;
+	public float getItemPrice() {
+		return price;
 	}
 	
-	public void setItemSold(boolean itemSold) {
-		this.itemSold = itemSold;
+	public void setItemPrice(float price) {
+		this.price = price;
 	}
+	
+	public Date getDateSold() {
+		return dateSold;
+	}
+	
+	public void setDateSold(Date dateSold) {
+		this.dateSold = dateSold;
+	}
+	
+	
 }
